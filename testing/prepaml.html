@@ -1,0 +1,884 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style type="text/css">
+	body {
+		font-family: Arial, Helvetica, sans-serif;
+		font-size: 13px;
+	}
+	h3 {
+		font-size: 16px;
+		margin: 5px 0;
+		border-bottom: solid 1px black;
+		padding-bottom: 4px;
+	}
+	.txbox, select{
+		border: 1px #666 solid;
+		margin: 3px;	
+	}
+	input.unpressed{
+		background:#CCC;
+		border-style:outset;
+	}
+	input.pressed{
+		background:#0F0;
+		border-style:inset;
+	}
+	#leftbox{
+		position:absolute;
+		top:10px;
+		left:10px;
+		width:660px;
+		min-height: 400px;
+	}
+	#rightbox{
+		position:fixed;
+		top: 10px;
+		left:680px;
+		width:300px;
+	}
+	#introbox{
+		padding: 5px 5px 0 5px;
+		margin: 5px;
+		width:640px;
+		
+	}
+	.qbox{ 
+		padding: 5px 5px 0 5px;
+		margin: 5px;
+		width:640px;
+		border: 2px solid;
+		}
+	.greybox{
+		background:#DDD;
+		border-color:#666;
+	}
+	.purplebox{
+		background:#CCF;
+		border-color: #99F;
+	}
+	.bluebox{
+		background:#9CF;
+		border-color:#09C;
+	}
+	.greenbox{
+		background:#CFC;
+		border-color:#0C0;
+	}
+
+	.subq{
+		font-weight:bold;
+		font-size:15px;
+		float:left;
+		min-height: 20px;
+	}
+	.advq{
+		font-weight:bold;
+	}
+	.advq a{
+		text-decoration: none;
+		color: #000;
+	}
+	.hider{
+		margin-top:10px;
+		display: none;
+	}
+	#outputtext{
+		background:#FFC;
+		font-family:"Courier New", Courier, monospace;
+		font-size:10pt;
+		margin: 5px;
+	}
+	.inline {
+		display: inline;
+	}
+	
+	.msg{
+		color:#990099;
+	}
+	.cdiv{
+	}
+	.higreen{
+		color: green;
+		
+	}
+	.hired{
+		color: #990;
+	}
+	.hired, .higreen, #progready{
+		display:inline;
+		
+	}	
+	#qd_nuc_model_desc {
+	  border: 1px black dotted;
+	  padding: 2px;
+	}
+	</style>
+    <title>prePAML 2016-05-22</title>
+</head>
+<body onload="setprog('?');clearvar();sethidden('seqtype','');updateDiv();clearseqfile()">
+  <div id="leftbox">
+    <div id="introbox" class="qbox greybox">
+      <strong>Welcome to prePAML (beta-testing version 2016-05-22)</strong><br />
+      Created by <a href="http://peaselab.github.io" target="_blank">James Pease</a>
+      <hr />
+      This page presents a guided method for creating control files for the PAML modules <em>baseml</em> and <em>codeml</em>. 
+      These files were created specifically for PAML 4.8a, but should work for most 4.x versions.  <br />
+      <strong>***Updating to the newest PAML version, is strongly recommended!***</strong>.  
+      <hr />
+      <strong>Instructions:</strong>
+      <ol>
+        <li>Answer the questions below about your data, being sure to consider all available options carefully.</li>
+        <li>As you fill in information, new options will appear and the control file will begin to appear on the right in the Control File Output Window.</li>
+        <li>When the Control File Output Window turns green, and the green "READY" text appears:</li>
+        <ul>
+          <li>Copy the text in the Control File Output Window, paste it into a plain text file, and save the file.</li>
+          <li>Place your control file and input sequence file (and tree file, if applicable) into the same folder</li>
+          <li>Run the "Command String" displayed above the Control File Output Window.</li>
+        </ul>
+      </ol>
+      <strong>IMPORTANT: </strong> If you run into an option you do not understand, do not just choose randomly. Consult the PAML manual and/or contact prePAML creators to let them 
+            know how prePAML could be improved.
+      <hr />
+      <p>
+        <strong>Useful links:</strong>
+        <a href="http://abacus.gene.ucl.ac.uk/software/paml.html" target="_blank">PAML website</a> &middot; <a href="http://abacus.gene.ucl.ac.uk/software/pamlDOC.pdf" target="_blank">PAML documentation (PDF)</a><br />
+        <strong>Wikipedia:</strong> <a href="https://en.wikipedia.org/wiki/Models_of_DNA_evolution" target="_blank">Models of DNA evolution</a> &middot; 
+        <a href="https://en.wikipedia.org/wiki/Gamma_distribution" target="_blank">Gamma distribution</a> &middot; 
+        <a href="https://en.wikipedia.org/wiki/Autocorrelation" target="_blank">Autocorrellation</a>
+      </p>
+      <hr />
+      <em>Items still to be developed: extended help hover boxes, clock models still not fully developed </em>
+      <br />
+      <hr />
+      <input type="button" class="unpressed" value="Don't Panic" onclick="clearseqfile();history.go(0);clearvar();"/> <em>(reset everything)</em>
+    </div>
+<!---BEGIN SECTION ON INPUT SEQUENCES--->
+    <div class="qbox purplebox" id="qd_inputs">
+      <h3>Part 1a: Input Sequences</h3>
+      My sequence data is
+      <select id="qi_seqtype" onchange="updateDiv();">
+        <option value="" onclick="setprog('?');clearvar();sethidden('seqtype','');updateDiv();"></option>
+        <option value="Nucleotides" onclick="setprog('?');clearvar();setvar('icode','');setvar('seqtype','');sethidden('seqtype','-1');updateDiv();">Nucleotides</option>
+        <option value="Amino Acids" onclick="setprog('codeml');clearvar();setvar('icode','');setvar('nhomo','');setvar('nparK','');setvar('seqtype','2');sethidden('seqtype','2');updateDiv();">Amino acids</option>
+      </select>...<br />
+      ...located in a FASTA or Phylip format file named:
+      <input type="text" class="txbox" id="qi_seqfile" style="width:300px;" onkeyup="setvar('seqfile',this.value);updateDiv();" />
+      <div id="qd_seqtype_nuc" class="hider">
+        I will analyze my nucleotides as 
+        <select id="qi_seqtype_nuc">
+          <option value="" onclick="setprog('?');clearvar();setvar('seqtype','');sethidden('seqtype','-1');updateDiv();"></option>
+          <option value="nucleotides" onclick="setprog('baseml');clearvar();setvar('seqtype','');sethidden('seqtype','0');updateDiv();">Nucleotides (not protein coding)</option>
+          <option value="codons" onclick="setprog('codeml');setvar('seqtype','1');sethidden('seqtype','1');updateDiv();">Codons (protein-coding sequence)</option>
+          <option value="translated amino acids" onclick="setprog('codeml');sethidden('seqtype','3');setvar('seqtype','3');updateDiv();">Amino acids (PAML will translate your codons to amino acids)</option>
+        </select>
+      </div>
+      <div class="hider" id="qd_gencode" >
+        My sequences use the <a href="http://www.ncbi.nlm.nih.gov/Taxonomy/Utils/wprintgc.cgi?mode=t" target="_blank">genetic translation code<a/>:  
+        <select id="qs_gencode" onchange="setvar('icode',this.value);">
+          <option value="" selected="selected">Standard/Universal</option>
+          <option value="1">Mammalian mitochondrial</option>
+          <option value="2">Yeast mitochondrial</option>
+          <option value="3">Mold mitochondrial</option>
+          <option value="4">Invertebrate mitochondrial</option>
+          <option value="5">Ciliate nuclear</option>
+          <option value="6">Echinoderm mitochondrial</option>
+          <option value="7">Euplotid mitochondrial</option>
+          <option value="8">Alt. yeast nuclear</option>
+          <option value="9">Ascidian mitochondrial</option>
+          <option value="10">Blepharisma nuclear</option>
+        </select>
+      </div>
+      <div class="hider" id="qd_runmode">
+        <h3>Part 1b: Input Phylogenetic Tree</h3>
+        The phylogenetic tree
+        <select id="qs_runmode" onchange="setvar('runmode',this.value);setvar('treefile','');updateDiv();">
+          <option value=""></option>
+          <option value="0">is in the Newick-formatted tree in file named:</option>
+          <option value="2">should be inferred by PAML.</option>
+        </select>
+        <div class="hider" id="qd_treefile">
+          <input type="text" class="txbox" id="qi_treefile" onkeyup="setvar('treefile',this.value);updateDiv();"/>
+        </div>
+      </div><br />
+      <div class="hider" id="qd_tree_alter">
+        PAML should 
+        <select id="qs_tree_alter" onchange="setvar('runmode',this.value);updateDiv();">
+          <option value="0">not alter the tree topology</option>
+          <option value="1">optimize tree topology using star-decomposition</option>
+          <option value="5">optimize tree topology using nearest-neighbor interchange (NNI)</option>
+        </select>
+      </div>
+      <div class="hider" id="qd_tree_auto">
+        PAML should infer the tree using
+        <select id="qs_tree_auto" onchange="setvar('runmode',this.value);updateDiv();">
+          <option value="2">star-decomposition (recommended)</option>
+          <option value="3">stepwise addition</option>
+          <option value="4">parsimony with nearest-neighbor interchange (NNI)</option>
+        </select>
+      </div><br />
+      <div class="hider" id="qd_branchlength">
+        Any branch lengths in my tree file should be: 
+        <select id="qs_branchlength" onchange="setvar('fix_blength',this.value);updateDiv();">
+          <option value=""></option>
+          <option value="0">ignored (recommended in most cases)</option>
+          <option value="-1">ignored, and use random values</option>
+          <option value="2">fixed at the specified values</option>
+          <option value="1">used as initial values for ML estimation</option>
+        </select>
+      </div><br />
+      <div class="hider" id="qd_treerooted">
+        My tree is 
+        <select id="qi_treerooted" onchange="setvar('clock',this.value);updateDiv();">
+          <option value=""></option>
+          <option value="0">unrooted</option>
+          <option value="1">rooted</option>
+        </select>
+        <div id="qd_clock" class="hider">
+          with a   
+          <select id="qi_clock" onchange="setvar('clock',this.value);updateDiv();">
+            <option value="1">global</option>
+            <option value="2">branch-specific</option>
+          </select>
+          molecular clock.
+        </div>
+      </div>
+      <div class="hider" id="qd_advinput">
+        <div class="advq">
+          <input type="button" value="show advanced input parameters" id="qd_advlink" onclick="toggleDiv('qd_advcontent',this.id);">
+            
+        </div>
+      </div>
+      <div class="hider" id="qd_advcontent">
+        <input type="checkbox" id="qc_cleandata" onmouseup="setcheckbox(this.id,'cleandata','','0')"/> Keep alignment sites with ambiguous bases (N,X,?,etc.) <em><strong>(NOT recommended)</strong></em><br />
+        <input type="checkbox" id="qc_ndata" onmouseup="setcheckbox(this.id,'ndata','','1')"/>My input contains multiple non-concatenated alignments <em><strong>(unusual)</strong></em>
+        <div id="qd_ndata" class="hider">
+          Number of alignments = 
+          <input type="text" id="qi_ndata" onkeyup="setvar('ndata',this.value);" />
+        </div><br />
+        My sequence alignment is: 
+        <select id="q1gr" onchange="setvar('Mgene',this.value);">
+          <option value="" selected="selected">Not partitioned (most common)</option>
+          <option value="0">G-partitioned (uniform &kappa;/&pi;, different <em>c</em>)</option>
+          <option value="2">G-partitioned (uniform &kappa;, different &pi; and <em>c</em>)</option>
+          <option value="3">G-partitioned (uniform &pi;, &kappa; and <em>c</em>)</option>
+          <option value="4">G-partitioned (different &pi;, &kappa;, and <em>c</em>)</option>
+          <option value="1">G-partitioned (different &pi;, &kappa;, and different branch lengths)</option>
+        </select>
+      </div>
+    </div>
+<!---BEGIN SECTION ON MODELING--->
+    <div id="qd_nuc" class="qbox bluebox hider">
+      <h3>Part 2: Nucleotide sequence evolution model</h3>
+      <div id="qd_nuc_model">
+        Nucleotide substitution model
+        <select id="qs_nuc_model" onchange="setvar('model',this.value);setvar('nhomo','0');updateDiv();nucModelDesc();">
+          <option value=""></option>
+          <option value="7" onclick="setvar('fix_kappa','');setvar('kappa','');">General Time Reversible (GTR/REV) (recommended)</option>
+          <option value="4" >Hasegawa-Kishino-Yano (HKY85)</option>
+          <option value="6" onclick="setvar('fix_kappa','');setvar('kappa','');">Tamura-Nei (TN93)</option>
+          <option value="0" onclick="setvar('fix_kappa','');setvar('kappa','');">Jukes-Cantor (JC69)</option>
+          <option value="1" >Kimura 2-param (K80)</option>
+          <option value="2" onclick="setvar('fix_kappa','');setvar('kappa','');">Felsenstein 1981 (F81)</option>
+          <option value="3" >Felsenstein 1984 (F84)</option>
+          <option value="5" onclick="setvar('fix_kappa','');setvar('kappa','');">Tamura 3-param (T92)</option>
+          <option value="8" onclick="setvar('fix_kappa','');setvar('kappa','');">UNREST</option>
+        </select>
+        <div id="qd_nuc_model_desc">(Model description will appear here once selected)</div>
+      </div>
+      
+      <div id="qd_kappa" class="hider">
+        The transition/transversion ratio (&kappa;) should be 
+        <select style="display:inline" id="q2nuc_br" onchange="setvar('fix_kappa',this.value);updateDiv();">
+          <option value=""></option>
+          <option value="0">estimated by PAML, starting at</option>
+          <option value="1">fixed at</option>
+        </select>
+        <input type="text" class="txbox" id="qi_nuc_kappa" onkeyup="setFloatRange(this.id,'kappa',0,1000);updateDiv();" /><br />
+        <input type="checkbox" id="qc_nuc_kappa_nhomo" onchange="setcheckbox(this.id,'nhomo','2','');updateDiv();" /> Different kappa for each branch on tree? <em>(WARNING: parameter heavy, only use on small trees)</em>
+      </div>
+      <div id="qd_nuc_model1" class="hider">
+        Base frequencies (&pi;-values) should be:
+        <select id="qs_nuc_model1" onchange="setvar('nhomo',this.value);updateDiv();">
+          <option value="">Calculated from observed values.</option>
+          <option value="1">Calculated from observed values, then optimized by ML.</option>
+        </select>
+      </div>
+      <div id="qd_nuc_model2" class="hider">
+        <select id="qs_nuc_model2" onchange="setvar('nhomo',this.value);updateDiv();">
+          <option value="0">Calculate base frequencies (&pi;-values) from observed values.</option>
+          <option value="1">ML-optimized base frequencies starting from observed values.</option>
+          <option value="2">Use different &kappa; for each branch</option>
+          <option value="3">Calculate base frequencies separately for (1) the root, (2) all internal branches, and  (3) all terminal branches.</option>
+          <option value="4">Calculate base frequencies separately for (1) the root and (2) all other branches</option>
+          <option value="4">Calculate base frequencies separately for branch groups I specified in the tree using ($/#)</option>
+        </select>
+      </div>
+      <div id="qd_nuc_model34" class="hider">
+        <div class="subq">Base frequencies (&pi;-values)  should be: </div> 
+        <select id="qs_nuc_model34" class="txbox" onchange="setvar('nhomo',this.value);updateDiv();">
+          <option value="">Calculated from observed values.</option>
+          <option value="1">Calculated from observed values, then optimized by ML.</option>
+          <option value="3">Calculated separately for (1) the root, (2) all internal branches, and  (3) all terminal branches.</option>
+          <option value="4">Calculated separately for (1) the root and (2) all other branches</option>
+          <option value="4">Calculated separately for branch groups I specified in the tree using ($/#)</option>
+        </select>
+      </div>
+      <div id="qd_nuc_site" class="hider">
+        <hr />
+        Among different sites in the alignment, substitution rates should be distributed
+        <select id="qs_nuc_site" onclick="setvar('fix_alpha',this.value);updateDiv();">
+          <option value="" onclick="setvar('alpha','');setvar('fix_rho','');setvar('rho','');setvar('nparK','');"></option>
+          <option value="0" onclick="setvar('fix_rho','1');setvar('rho','0');setvar('nparK','');">discretely under Gamma, with adjacent sites independent (recommended)</option>
+          <option value="1" onclick="setvar('alpha','0');setvar('fix_rho','1');setvar('rho','0');setvar('ncatG','');setvar('nparK','');">uniformly and independently</option>
+          <option value="0" onclick="setvar('fix_rho','0');setvar('nparK','');">discretely distributed (Gamma), with adjacent sites autocorrelated</option>
+          <option value="" onclick="setvar('alpha','');setvar('fix_rho','');setvar('rho','');setvar('nparK','1');">discretely distributed (non-parametric), with adjacent sites independent</option>
+				  <option value="" onclick="setvar('alpha','');setvar('fix_rho','');setvar('rho','');setvar('nparK','3');">discretely distributed (non-parametric), with adjacent sites Markov-dependent</option>
+        </select>
+        <div id="qd_nuc_alpha" class="hider">
+          <a href="https://en.wikipedia.org/wiki/Gamma_distribution" target="_blank">Gamma distribution</a> shape parameter (&alpha;) =
+          <input type="text" class="txbox" id="qi_nuc_alpha" onkeyup="setFloatRange(this.id,'alpha',0,1000);updateDiv();" /> <em>(&alpha; &gt; 0, suggested 0.5)</em>
+        </div>
+        <div id="qd_nuc_rho" class="hider">
+          <a href="https://en.wikipedia.org/wiki/Autocorrelation" target="_blank">Autocorrellation</a> coefficient (&rho;) =
+          <input type="text" id="qi_nuc_rho" class="txbox" onkeyup="setFloatRange(this.id,'rho',0,1);updateDiv();" /> <em>(0 &lt; &rho; &lt; 1, suggested 0.1)</em>
+        </div>
+        <div id="qd_nuc_npark" class="hider">
+          <div style="width:600px; padding-bottom:5px;">
+            <input type="checkbox" id="q2nuc_fr" onmouseup="if (this.checked){if (params['nparK'] == '2'){setvar('nparK','1')}else if(params['nparK'] == '4'){setvar('nparK','3')}}else{if (params['nparK'] == '1'){setvar('nparK','2')}else if(params['nparK'] == '3'){setvar('nparK','4')}}" /> 
+            Discrete rates are not required to be equally probable.
+          </div>
+        </div>
+        <div id="qd_nuc_ncatg" class="hider">
+          Number of <a href="https://en.wikipedia.org/wiki/Gamma_distribution" target="_blank">discrete rate categories</a> =
+          <input type="text" id="q2nuc_fg" class="txbox" onkeyup="setInt(this.id,'ncatG',this.value);" /> <br />
+          <em>(4,5,8, or 10 are reasonable choices, larger values (e.g. 40) can be used if want to test site-specific rates)</em>
+        </div>
+      </div>
+    </div>
+<!---CODON MODELS--->
+    <div class="qbox bluebox hider" id="qd_codon">
+      <h3>Part 2: Codon sequence evolution model</h3>
+      Codon Frequencies:
+      <select id="qd_codon_freq" onchange="setvar('CodonFreq',this.value);updateDiv();">
+        <option value=""></option>
+        <option value="0">All equivalent (1/61 for each)</option>
+        <option value="1">Calculate from nucleotide frequencies (F1X4)</option>
+        <option value="2">Calculate from nucleotide frequencies for each frame (F3X4)</option>
+        <option value="3">Estimate all as free parameters</option>
+      </select>
+      <div id="qd_codon_modeltype">
+        I want to calculate dN/dS (&omega;) using a:
+        <select id="q2codon_br" onclick="setvar('model',this.value);updateDiv();">
+          <option value="" onclick="setvar('NSSites','');setvar('aaDist','');sethidden('codonmodel','');"></option>
+          <option value="0" onclick="setvar('NSsites','0');sethidden('codonmodel','simple');">simple model, with constant dN/dS on all branches and sites.</option>
+          <option value="" onclick="setvar('NSsites','0');setvar('aaDist','');sethidden('codonmodel','branch');">branch model, with dN/dS varying among branches but constant among sites </option>
+          <option value="0" onclick="setvar('NSsites','');setvar('aaDist','');sethidden('codonmodel','site');">site model, with dN/dS varying among sites but constant among branches</option>
+          <option value="" onclick="setvar('NSsites','0');setvar('aaDist','');sethidden('codonmodel','branchsite');">a branch-site model, with dN/dS varying among both branches and sites</option>
+        </select>
+      </div>      
+      <div class="hider" id="qd_codon_modelbranch">
+      Among branches dN/dS (&omega;) values should be:
+        <select id="q2codon_c1r" onchange="setvar('model',this.value);updateDiv();">
+          <option value=""></option>
+          <option value="1">be calculated separately (free parameter)</option>
+          <option value="2">be calculated in groups specified by special symbols ($/#)</option>
+        </select>
+      </div>
+      <div class="hider" id="qd_codon_modelsite">
+        <div class="subq" style="float:none;">I want to calculate site model(s) dN/dS (&omega;) values should be:</div>
+        <em>(Note: multiple models useful for perform likelihood-ratio tests)</em>
+        <div>
+          <input type="checkbox" name="q2codon_c2" value="1" onclick="setMultiCheck(this.name,'NSsites');updateDiv();" />either 0 or 1 (two-dN/dS, M1)<br />
+          <input type="checkbox" name="q2codon_c2" value="2" onclick="setMultiCheck(this.name,'NSsites');updateDiv();" />either 0 or 1 or an estimated value (three-dN/dS, M2)<br />
+          <input type="checkbox" name="q2codon_c2" value="3" onclick="setMultiCheck(this.name,'NSsites');updateDiv();" />discrete distributed (M3)<br />
+          <input type="checkbox" name="q2codon_c2" value="4" onclick="setMultiCheck(this.name,'NSsites');updateDiv();" />frequency distributed (M4)<br />
+          <input type="checkbox" name="q2codon_c2" value="5" onclick="setMultiCheck(this.name,'NSsites');updateDiv();" />Gamma-distributed (M5)<br />
+          <input type="checkbox" name="q2codon_c2" value="6" onclick="setMultiCheck(this.name,'NSsites');updateDiv();" />2*Gamma<br />
+          <input type="checkbox" name="q2codon_c2" value="7" onclick="setMultiCheck(this.name,'NSsites');updateDiv();" />beta-distributed<br />
+          <input type="checkbox" name="q2codon_c2" value="8" onclick="setMultiCheck(this.name,'NSsites');updateDiv();" />beta&amp;w<br />
+          <input type="checkbox" name="q2codon_c2" value="9" onclick="setMultiCheck(this.name,'NSsites');updateDiv();" />beta&amp;Gamma<br />
+          <input type="checkbox" name="q2codon_c2" value="10" onclick="setMultiCheck(this.name,'NSsites';updateDiv();)" />beta&amp;Gamma+1<br />
+          <input type="checkbox" name="q2codon_c2" value="11" onclick="setMultiCheck(this.name,'NSsites');updateDiv();" />beta-distributed when &lt; 1, Normal-distributed &gt; 1<br />
+          <input type="checkbox" name="q2codon_c2" value="12" onclick="setMultiCheck(this.name,'NSsites');updateDiv();" />0 and 2*Normally-distributed when &gt; 1<br />
+          <input type="checkbox" name="q2codon_c2" value="13" onclick="setMultiCheck(this.name,'NSsites');updateDiv();" />3*Normally-distributed
+        </div>
+      </div>
+      <div class="hider" id="qd_codon_modelbranchsite">
+        <div class="subq">Use branch-site model:</div>
+        <select id="q2codon_c3r" onchange="updateDiv();">
+          <option onclick="setvar('model','');setvar('NSsites','');"></option>
+          <option onclick="setvar('model','2');setvar('NSsites','2');setvar('fix_omega','1');setvar('omega','1');">Model A1a (null test)</option>
+          <option onclick="setvar('model','2');setvar('NSsites','2');setvar('fix_omega','0');setvar('omega','1');">Model A (alternative test)</option>
+          <option onclick="setvar('model','3');setvar('NSsites','3');setvar('fix_omega','');setvar('omega','');">Clade Model C </option>
+        </select><br />
+        <em>Note: It is recommended to run both Model A1a and Model A and perform a likelihood-ratio test, this result will give you a test
+        of positive selection on your specially labeled "foreground" branch.</em>
+      </div>
+      <div class="hider" id="qd_codon_aadist">
+        <div class="subq">Amino Acid Distances:</div>
+        <select id="q2codon_dr" onchange="setvar('aaDist',this.value);updateDiv();">
+          <option value=""></option>
+          <option value="0">all AA changes equivalent</option>
+          <option value="1">Grantham's Matrix</option>
+          <option value="2">Miyata</option>
+          <option value="3">c</option>
+          <option value="4">p</option>
+          <option value="5">v</option>
+          <option value="6">a</option>  
+        </select>
+      </div>
+    </div>
+<!---AMINO ACID MODELS--->
+    <div id="qd_aa" class="qbox bluebox hider">
+      <h3>Part 2: Amino acid sequence evolution model</h3>
+      <div id="qd_aa_ratefile">
+        Amino acid substitution rates should be:
+        <select id="qs_aa_ratefile" onchange="setvar('model',this.value);" onclick="updateDiv();">
+          <option value="" onclick="sethidden('aacustom','0');"></option>
+          <option value="2" onclick="setvar('aaRatefile','dat/wag.dat');sethidden('aacustom','0');">WAG (recommended)</option>
+          <option value="2" onclick="setvar('aaRatefile','dat/jones.dat');sethidden('aacustom','0');">JTT</option>
+          <option value="0" onclick="setvar('aaRatefile','');sethidden('aacustom','0');">equal (Poisson model)</option>
+          <option value="1" onclick="setvar('aaRatefile','');sethidden('aacustom','0');">proportional to frequency</option>
+          <option value="2" onclick="setvar('aaRatefile','dat/dayhoff.dat');sethidden('aacustom','0');">Dayhoff</option>        	     
+          <option value="2" onclick="setvar('aaRatefile','dat/mtmam.dat');sethidden('aacustom','0');">mtMAM</option>
+          <option value="2" onclick="setvar('aaRatefile','dat/mtREV24.dat');sethidden('aacustom','0');">mtREV24</option>
+          <option value="2" onclick="setvar('aaRatefile','');sethidden('aacustom','1');">Custom</option>
+        </select>
+        <div class="hider" id="qd_aa_custom">
+          AArate file name:
+          <input type="text" class="txbox" id="qi_aa_custom" onkeyup="setvar('aaRatefile',this.value);updateDiv();" />
+        </div>
+        <div id="qd_aa_sub">
+          Among different sites in the alignment, substitution rates should be distributed
+          <select id="qs_aa_sub" onchange="setvar('fix_alpha',this.value);" onclick="updateDiv();">
+            <option value="" onclick="setvar('alpha','');setvar('fix_rho','');setvar('rho','');updateDiv();"></option>
+            <option value="1" onclick="setvar('alpha','0');setvar('fix_rho','1');setvar('rho','0');setvar('ncatG','');updateDiv();">uniformly and independently (recommended for most cases)</option>
+            <option value="0" onclick="setvar('fix_rho','1');setvar('rho','0');updateDiv();">discretely distributed (Gamma), with adjacent sites independent</option>
+            <option value="0" onclick="setvar('fix_rho','0');updateDiv();">discretely distributed (Gamma), with adjacent sites autocorrellated</option>
+          </select>
+        </div>
+        <div id="qd_aa_alpha" class="hider">
+          <a href="https://en.wikipedia.org/wiki/Gamma_distribution" target="_blank">Gamma distribution</a> shape parameter (&alpha;) =
+          <input type="text" id="qi_aa_alpha" class="txbox" onkeyup="setFloatRange(this.id,'alpha',0,1000);updateDiv();" /> <em>(alpha &gt; 0)</em>
+        </div>
+        <div id="qd_aa_rho" class="hider">
+          <a href="https://en.wikipedia.org/wiki/Autocorrelation" target="_blank">Autocorrellation</a> coefficient (&rho;) =
+          <input type="text" id="qi_aa_rho" class="txbox" onkeyup="setFloatRange(this.id,'rho',0,1);updateDiv();" /> <em>(0 &lt; &rho; &lt; 1)</em>
+        </div>
+        <div id="qd_aa_ncatg" class="hider">
+          Number of <a href="https://en.wikipedia.org/wiki/Gamma_distribution" target="_blank">discrete rate categories</a> =
+          <input type="text" class="txbox" id="qs_aa_ncatg" onkeyup="setInt(this.id,'ncatG',this.value);updateDiv(); " /> <br />
+          <em>(4,5,8, or 10 are reasonable choices, larger values (e.g. 40) can be used if want to test site-specific rates)</em>
+        </div>
+      </div>
+    </div>
+    <div class="qbox greenbox hider" id="qd_output">
+      <h3>Part 3: Output options</h3>
+      Output file name:              
+      <input type="text" class="txbox" id="qi_outfile" style="width:400px;" value="mlc" onkeyup="setvar('outfile',this.value);" /><br />
+      <div id="qd_noisy">
+        Screen output:
+        <select id="qs_noisy" onchange="setvar('noisy',this.value);">
+          <option value="">none</option>
+          <option value="1">some</option>
+          <option value="2">a little more</option>
+          <option value="3">maybe too much</option>
+        </select>
+      </div><br />
+      <div id="qd_verbose">
+        File output:
+        <select id="qs_verbose" onchange="setvar('verbose',this.value);">
+          <option value="">concise</option>
+          <option value="1">detailed</option>
+        </select>
+      </div><br />
+      <div id="qd_getse">
+        <div style="width:600px; padding-bottom:5px;">
+          <input type="checkbox" id="qc_getse" onmouseup="setcheckbox(this.id,'getSE','','1')"/> Include standard error for all estimates?</div>
+        </div>
+      <div id="qd_ancestral" class="hider">
+        <div style="width:600px; padding-bottom:5px;">
+          <input type="checkbox" id="qc_recon" onmouseup="recoCheck(this.id,'qd_recon_msg');" />
+          Reconstruct ancestral states
+        </div> 
+      </div>
+      <div id='qd_recon_msg' class="msg">
+        NOTE: Ancestral reconstruction available only when rates across sites are variable (alpha > 0, ncatG > 1).
+      </div>
+    </div>
+    <div style="height:200px"></div>
+  </div>  
+	
+  <div id="rightbox">
+    <h3>
+      Control File Output Window:
+    </h3>
+    <strong>Control file is 
+    <div id="progready">
+      <div class="hired">
+        NOT READY
+      </div>
+    </div>:<br /></strong>
+    <div id="progname" class="higreen" style="display:block;">
+    </div>
+	  <textarea id="outputtext" rows="10" style="height: 400px; width: 300px;" cols="" spellcheck="false" draggable="false" readonly="readonly">
+    </textarea>
+  </div>
+<script type="text/javascript">
+	params = {seqtype: ''};
+	hide_params = {seqtype:'',codonmodel:'',aacustom:''};
+	function paramDef(param){
+		return (params[param] != ''&&params[param] != null&&params[param] != undefined&&params[param] != 'undefined');
+	}
+	function hide_paramDef(param){
+		return (hide_params[param] != ''&&hide_params[param] != null);
+	}
+	function updateDiv(){
+		var all_div = document.getElementsByClassName("hider");
+		for (i=0;i<all_div.length;i++){
+			if (showConditions(all_div.item(i).id)){
+				showDiv(all_div.item(i).id);
+			}
+			else{
+				hideDiv(all_div.item(i).id);
+			}
+		}
+	}
+	function showConditions(id){
+		switch(id){
+			case "qd_seqtype_nuc":
+        if(paramDef('seqfile')){
+          return (hide_params['seqtype'] == '-1'||hide_params['seqtype'] == '1'||hide_params['seqtype'] == '0'||hide_params['seqtype'] == '3');
+        }
+        else{
+          return false;
+        }
+				break;
+			case "qd_gencode":
+				return (hide_params['seqtype'] != '2'&&hide_params['seqtype'] != '-1'&&hide_paramDef('seqtype'));
+				break;
+			case "qd_runmode":
+				return (hide_params['seqtype'] != '-1'&&hide_paramDef('seqtype'));
+				break;
+			case "qd_tree_alter":
+        if(paramDef('treefile')){
+          return (params['runmode']=='1'||params['runmode']=='5'||params['runmode']=='0');
+        }
+        else{
+          return false;
+        }
+				break;
+			case "qd_tree_auto":
+				return (params['runmode']=='2'||params['runmode']=='3'||params['runmode']=='4');
+				break;
+			case "qd_treefile":
+				return (params['runmode']=='1'||params['runmode']=='0'||params['runmode']=='5');
+				break;
+      case "qd_branchlength":
+			case "qd_treerooted":
+        if(paramDef('treefile')){
+          return (params['runmode']=='1'||params['runmode']=='5'||params['runmode']=='0');
+        }
+        else{
+          return false;
+        }
+        break
+			case "qd_clock":
+				return (params['clock']=='2'||params['clock']=='1');
+				break;
+			case "qd_advinput":
+				return ((paramDef('clock')&&paramDef('treefile')&&paramDef('fix_blength'))||(params['runmode']=='2'||params['runmode']=='3'||params['runmode']=='4'));
+				break;
+			case "qd_ndata":
+				return paramDef('ndata');
+				break;
+			case "qd_nuc":
+				return (params['seqtype']==''&&hide_params['seqtype']=='0'&&document.getElementById('qd_advinput').style.display === 'inherit');
+				break;
+			case "qd_codon":
+				return (hide_params['seqtype']=='1'&&document.getElementById('qd_advinput').style.display === 'inherit');
+				break;
+			case "qd_aa":
+				return ((hide_params['seqtype']=='2'||hide_params['seqtype']=='3')&&document.getElementById('qd_advinput').style.display === 'inherit');
+				break;
+			case "qd_kappa":
+				return (hide_params['seqtype']=='0'&&(params['model']=='1'||params['model']=='3'||params['model']=='4'));
+				break;
+			case "qd_nuc_model1":
+				return (hide_params['seqtype']=='0'&&params['model']=='1');
+				break;
+			case "qd_nuc_model2":
+				return (hide_params['seqtype']=='0'&&params['model']=='2');
+				break;
+			case "qd_nuc_model34":
+				return (hide_params['seqtype']=='0'&&(params['model']=='3'||params['model']=='4'));
+				break;
+			case "qd_nuc_site":
+				return (hide_params['seqtype']=='0'&&((params['model']=='0'||params['model']=='5'||params['model']=='6'||params['model']=='7'||params['model']=='8')||((params['model']=='1'||params['model']=='3'||params['model']=='4')&&paramDef('kappa'))));
+				break;
+			case "qd_nuc_alpha":
+			case "qd_nuc_ncatg":
+				return (hide_params['seqtype']=='0'&&params['fix_alpha']=='0');
+				break;
+			case "qd_nuc_rho":
+				return (hide_params['seqtype']=='0'&&params['fix_rho']=='0');
+				break;
+			case "qd_nuc_npark":
+				return (hide_params['seqtype']=='0'&&paramDef('nparK'));
+				break;
+			case "qd_codon_modelbranch":
+				return (hide_params['seqtype']=='1'&&hide_params['codonmodel']=='branch');
+				break;
+			case "qd_codon_modelsite":
+				return (hide_params['seqtype']=='1'&&hide_params['codonmodel']=='site');
+				break;
+			case "qd_codon_modelbranchsite":
+				return (hide_params['seqtype']=='1'&&hide_params['codonmodel']=='branchsite');
+				break;
+			case "qd_codon_aadist":
+				return (hide_params['seqtype']=='1'&&hide_params['codonmodel']=='simple');
+				break;
+			case "qd_aa_custom":
+				return ((hide_params['seqtype']=='2'||hide_params['seqtype']=='3')&&hide_params['aacustom']=='1');
+			case "qd_aa_alpha":
+			case "qd_aa_ncatg":
+				return ((hide_params['seqtype']=='2'||hide_params['seqtype']=='3')&&params['fix_alpha']=='0');
+				break;
+			case "qd_aa_rho":
+				return ((hide_params['seqtype']=='2'||hide_params['seqtype']=='3')&&params['fix_rho']=='0');
+				break;
+			case "qd_output":
+				switch(hide_params['seqtype']){
+					case '0':
+						return paramDef('fix_alpha')||paramDef('nparK');
+						break;
+					case '1':
+						return (paramDef('CodonFreq')&&paramDef('model')&&paramDef('NSsites'));
+						break;
+					case '2':
+					case '3':
+						return (paramDef('model')&&paramDef('fix_alpha'));
+				}	
+				break;
+			case "qd_ancestral":
+				if (paramDef('alpha')&&paramDef('ncatG')){
+					return (params['alpha'].valueOf()>0&&params['ncatG'].valueOf()>1)
+				}
+				else{
+					return false
+				}
+				break;
+			}
+			
+	}
+	function button_toggle(id,name){
+	   var button_group = document.getElementsByName(name);
+	   for (i=0;i<button_group.length;i++){
+		   button_group[i].className = 'unpressed';
+		   if (button_group[i].id == id){
+			 button_group[i].className = 'pressed';  
+		   }
+	   }
+	}
+	function setvar(xkey,xvalue){
+		params[xkey] = xvalue;
+		document.getElementById("outputtext").value = "";
+		for (var i in params)
+		{
+			if (params[i] != ''){
+				document.getElementById("outputtext").value += i + " = " + params[i] + "\r\n";
+			}
+		}
+		if (paramDef('seqfile')&&paramDef('outfile')&&(params['runmode']=='2'||params['runmode']=='3'||params['runmode ']=='4'||paramDef('treefile'))){
+			if (params['outfile'].length > 0&&params['seqfile'].length > 0){
+			document.getElementById('outputtext').style.background = "#CFC";
+			document.getElementById('progready').innerHTML = (
+				'<div class="higreen">READY to run with command</div>');
+      document.getElementById("progname").innerHTML = (
+        '<tt>' + hide_params['progname'] + '[NAME_OF_THIS_FILE].ctl</tt>');
+			}
+			else{
+			document.getElementById('outputtext').style.background = "#FFC";
+			document.getElementById('progready').innerHTML = (
+				'<div class="hired">NOT READY</div>');
+      document.getElementById("progname").innerHTML = ('');
+			}
+		}
+		else{
+			document.getElementById('outputtext').style.background = "#FFC";
+			document.getElementById('progready').innerHTML = (
+				'<div class="hired">NOT READY</div>');
+      document.getElementById("progname").innerHTML = ('');  
+			}
+		
+	}
+	function sethidden(xkey,xvalue){
+		hide_params[xkey] = xvalue;
+	}
+	function isEmpty(value){
+		return (value == null || value === false)
+	}
+	function setInt(id,param){
+	   var value = document.getElementById(id).value
+		if((parseFloat(value) == parseInt(value))&&!isNaN(value)){
+		  document.getElementById(id).style.background = '';
+		  setvar(param,value);
+		} 
+		else {
+			document.getElementById(id).style.background = '#FF0';
+		} 
+	} 
+	function setFloatRange(id,param,minrange,maxrange){
+		var xval = document.getElementById(id).value;
+		if (isNaN(parseFloat(xval)) == false){
+			if (parseFloat(xval)>parseFloat(minrange)&&parseFloat(xval)<parseFloat(maxrange)){
+			document.getElementById(id).style.background = '';
+			setvar(param,document.getElementById(id).value);
+			}
+			else{
+				document.getElementById(id).style.background = '#FF0';
+			}
+		} 
+		else {
+			document.getElementById(id).style.background = '#FF0';
+		} 
+	} 
+	function setcheckbox(id,xkey,checkvalue,uncheckvalue){
+	   if (document.getElementById(id).checked){
+		   setvar(xkey,checkvalue)
+	   }
+	   else{
+		  setvar(xkey,uncheckvalue)
+	   }
+	}
+	function setMultiCheck(name,param){
+	   var checks = document.getElementsByName(name)
+	   params[param] = ''
+	   for (i=0;i<checks.length;i++){
+		   if (checks.item(i).checked){
+			   params[param] += checks.item(i).value + ' ';
+		   }
+	   }
+	   setvar('NSsites',params['NSsites']);
+	}
+	function clearvar(){
+		var seqfilename = '' + params.seqfile
+		document.getElementById("outputtext").value = ""
+		setvar('seqfile', seqfilename);
+	}
+	function showDiv(id){
+		if (document.getElementById(id).style.display == 'none'){
+			resetForms(id);
+		}
+		document.getElementById(id).style.display = 'inherit';
+	}
+	function hideDiv(id){
+		resetForms(id);
+		document.getElementById(id).style.display = 'none';
+	}
+	function toggleDiv(id,linkid){;
+		if (document.getElementById(id).style.display != "block"){
+			document.getElementById(id).style.display = "block";
+			linkid.value = "hide advanced input parameters";
+		}
+		else {
+		document.getElementById(id).style.display = "none";
+			linkid.value = "show advanced input parameters";
+		}
+	}
+	function resetForms(id){
+		var frm_elements = document.getElementById(id).getElementsByTagName('input');
+	
+		for (j=0;j<frm_elements.length;j++){
+			field_type = frm_elements[j].type.toLowerCase();
+			switch (field_type)
+				{
+				case "button":
+					frm_elements[j].className = "unpressed";
+					break
+				case "text":
+				case "password":
+				case "textarea":
+				case "hidden":
+					frm_elements[j].value = "";
+					break;
+				case "radio":
+				case "checkbox":
+					if (frm_elements[j].checked)
+					{
+						frm_elements[j].checked = false;
+					}
+					break;
+				case "select-one":
+				case "select-multi":
+					frm_elements[j].selectedIndex = 0;
+					break;
+				default:
+					break;
+				}
+			}
+		var frm_elements = document.getElementById(id).getElementsByTagName('select');
+		for (j=0;j<frm_elements.length;j++){
+			frm_elements[j].selectedIndex = 0;
+		}
+	}
+	function setprog(value){
+    hide_params['progname'] = value;
+    
+	}
+	function clearseqfile(){
+		document.getElementById("qi_seqfile").value = '';
+    document.getElementById("qi_seqtype").value = '';
+	}
+  function nucModelDesc(){
+    var mdesc = '';
+    switch(params['model'])
+    {
+      case "7":
+        mdesc = ("Transition probabilites are empirically estimated separately for each pair of nucleotides," +
+                 " with equal rates in both directions for a given pair (hence \"reversibe\").  So the rate of" +
+                 " T&rarr;C is not equal to T&rarr;G, but the rate of T&rarr;C is equal to C&rarr;T.");
+        break
+      case "4":
+        mdesc = ("Transition probabilites are estimated separately for each nucleotide from empirical base frequencies" +
+                 " and a relative transition/transversion rate estimated/specified by paramter &kappa; (kappa).");
+        break
+      case "6":
+        mdesc = ("Transition probabilites are estimated separately for each nucleotide from empirical base frequencies," +
+                 " and both transition&rarr;transversion and transversion&rarr;transition parameters.");
+        break
+      case "0":
+        mdesc = ("All transitions are equally likely (simplest model, no free parameters)");
+        break
+      case "1":
+        mdesc = ("Relative transition/transversion rates are estimated/specified by paramter &kappa; (kappa).");
+        break
+      case "2":
+        mdesc = ("Transition probabilites are estimated separately for each nucleotide from empirical base frequencies," +
+                 " with equal probability of transitioning from that given nucleotide to any of the other 3 nucleotides.");
+        break
+      case "3":
+        mdesc = ("Transition probabilites are estimated separately for each nucleotide from empirical base frequencies," +
+                 " empirical purine (A/G) and pyrimidine (C/T) frequencies," +
+                 " and relative transition/transversion rate estimated/specified by paramter &kappa; (kappa).");
+        break
+      case "4":
+        mdesc = ("Transition probabilites are esimated from empirical frequency of GC nucleotides," +
+                 "and a relative transition/transversion rate estimated/specified by paramter &kappa; (kappa).");
+        break
+      case "8":
+        mdesc = ("All transition probabilities are estimated separated from empirical frequencies (most parameter-rich)");
+        break
+      default:
+        mdesc = ('(Model description will appear here once selected)');
+    }
+    document.getElementById("qd_nuc_model_desc",'').innerHTML = (mdesc);
+  }
+  
+  
+  
+  	</script>
+  </body>
+</html>
