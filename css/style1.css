@@ -90,7 +90,7 @@
 
 
 body{
-    background: #111;
+    background: #0c0c0c;
     /*font-family: "Metropolis", sans-serif;*/
     font-family: "Open Sans", sans-serif;
     color: #eee;
@@ -103,7 +103,7 @@ hr {
 
 a {
    text-decoration:none;
-   color: #ccf;
+   color: #d0d0ff;
 }
 
 a img {
