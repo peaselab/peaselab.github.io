@@ -115,7 +115,7 @@
 	  padding: 2px;
 	}
 	</style>
-    <title>prePAML 2016-05-22</title>
+    <title>prePAML 2018-05-25</title>
 </head>
 <body onload="setprog('?');clearvar();sethidden('seqtype','');updateDiv();clearseqfile()">
   <div id="leftbox">
@@ -500,12 +500,12 @@
         </div>
       <div id="qd_ancestral" class="hider">
         <div style="width:600px; padding-bottom:5px;">
-          <input type="checkbox" id="qc_recon" onmouseup="recoCheck(this.id,'qd_recon_msg');" />
+          <input type="checkbox" id="qd_recon" onmouseup="setcheckbox(this.id,'RateAncestor', '', '1');" />
           Reconstruct ancestral states
         </div> 
       </div>
       <div id='qd_recon_msg' class="msg">
-        NOTE: Ancestral reconstruction available only when rates across sites are variable (alpha > 0, ncatG > 1).
+        NOTE: Ancestral reconstruction available only when rates across sites are variable (alpha &gt; 0, ncatG &gt; 1).
       </div>
     </div>
     <div style="height:200px"></div>
