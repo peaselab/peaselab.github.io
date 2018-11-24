@@ -196,9 +196,11 @@ ul.publist li.pubyear {
     background:#ccf;
     font-family: "LeagueGothic";
 }
+ul.publist li pubtitle {
+		font-weight: bold; 
+}
 ul.publist li pubtitle a {
     border:none;
-    
     line-height:normal;
 }
 ul.publist li pubcite {
